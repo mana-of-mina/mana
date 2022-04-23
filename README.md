@@ -1,5 +1,7 @@
 # Mana: More Anonymous Name Anchor
 
+![Mana logo](./logo.png)
+
 Mana is an anonymous name system built on top of Mina blockchain.
 It allows users to anonymously register a name, and set which content it points to.
 
