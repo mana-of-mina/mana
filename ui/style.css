@@ -12,5 +12,48 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 50% 50%;
+  min-height: 100vh;
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-item.blue {
+  background: radial-gradient(
+    ellipse at center,
+    #70bdf4 0,
+    #63b6f2 42%,
+    #209cee 100%
+  );
+}
+
+.grid-item.pink {
+  background: radial-gradient(
+    ellipse at center,
+    #f571b5 0,
+    #f263ad 42%,
+    #f263ad 100%
+  );
+}
+
+.is-cursive {
+  font-family: Sniglet, cursive;
+  font-size: 3em;
+}
+
+.white {
+  color: #fff;
+}
+
+.face {
+  font-size: 5em;
+  text-align: center;
+}
+
+.hide {
+  display: none;
 }

@@ -15,19 +15,66 @@ team tree, team water -->
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
     <title>Mana</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script async src="index.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sniglet:wght@800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="grid-container">
-      <div class="grid-item">
-        <p><a href="">Join #Alice 🧑</a></p>
-        <p>Submit picture if you're alice</p>
+      <div class="grid-item blue">
+        <div>
+          <p class="face">🧑</p>
+          <p class="is-cursive">
+            <a
+              href="https://bafybeibvuoqkjzzqrm335vrnkdiwo5nodcm26jjam7zqndej6qed2xu4ma.ipfs.cf-ipfs.com"
+              class="white"
+            >
+              Join #Alice
+            </a>
+          </p>
+          <p
+            class="white"
+            onclick="getElementById('proof2').classList.remove('hide')"
+          >
+            > Valid name proof
+          </p>
+          <p class="white hide" id="proof2">
+            Mina Proof has been validated against the state
+            7db9294314ec7bdef1e485efa369cff17ab209b96d63cd60efb33aabc3b4665a and
+            along the merkle path ...
+          </p>
+        </div>
       </div>
-      <div class="grid-item">
-        <p><a href="">Discover #Bob 👩</a></p>
-        <p>Submit picture if you're bob</p>
+      <div class="grid-item pink">
+        <div>
+          <p class="face">👩</p>
+          <p class="is-cursive">
+            <a
+              href="https://bafybeiapxau6ladz3whp6snahjjw7hrl2piyrfpzmu3iu2astwlf7rw4gm.ipfs.cf-ipfs.com/"
+              class="white"
+            >
+              Discover #Bob
+            </a>
+          </p>
+          <p
+            class="white"
+            onclick="getElementById('proof2').classList.remove('hide')"
+          >
+            > Valid name proof
+          </p>
+          <p class="white hide" id="proof2">
+            Mina Proof has been validated against the state
+            7db9294314ec7bdef1e485efa369cff17ab209b96d63cd60efb33aabc3b4665a and
+            along the merkle path ...
+          </p>
+        </div>
       </div>
     </div>
   </body>
