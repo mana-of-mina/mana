@@ -64,7 +64,11 @@ export default class RegistryApp extends SmartContract {
     });
 
     this.subnode0.set(Field.zero); // this is the hash of the public key
+    this.resolver0_a.set(Field.zero);
+    this.resolver0_b.set(Field.zero);
     this.subnode1.set(Field.zero);
+    this.resolver1_a.set(Field.zero);
+    this.resolver1_b.set(Field.zero);
   }
 
   // fun fact is we could even just have a public key here
@@ -77,8 +81,8 @@ export default class RegistryApp extends SmartContract {
     owner.equals(Field.zero).assertEquals(true);
 
     const ownerValue = this.hash(sk.toPublicKey());
-    this.subnode1.set(ownerValue);
-    // Circuit.if(index, this.subnode0.set(ownerValue), this.subnode1.set(ownerValue))
+    this.subnode0.set(Circuit.if(index, ownerValue, this.subnode0.get()));
+    this.subnode1.set(Circuit.if(index.not(), ownerValue, this.subnode1.get()));
   }
 
   @method setOwner(sk: PrivateKey, subnode: Field, newOwner: PublicKey) {
@@ -88,11 +92,8 @@ export default class RegistryApp extends SmartContract {
     owner.assertEquals(this.hash(sk.toPublicKey()));
     const ownerValue = this.hash(newOwner);
 
-    Circuit.if(
-      index,
-      this.subnode0.set(ownerValue),
-      this.subnode1.set(ownerValue)
-    );
+    this.subnode0.set(Circuit.if(index, ownerValue, this.subnode0.get()));
+    this.subnode1.set(Circuit.if(index.not(), ownerValue, this.subnode1.get()));
   }
 
   @method setResolver(sk: PrivateKey, subnode: Field, newResolver: Resolver) {
@@ -107,9 +108,19 @@ export default class RegistryApp extends SmartContract {
 
     const fResolver = newResolver.toFields();
     Field(fResolver.length).assertEquals(2);
-    this.resolver1_a.set(fResolver[0]);
-    this.resolver1_b.set(fResolver[1]);
-    // Circuit.if(index, this.resolver0.set(newResolver), this.resolver1.set(newResolver))
+
+    this.resolver0_a.set(
+      Circuit.if(index, fResolver[0], this.resolver0_a.get())
+    );
+    this.resolver0_b.set(
+      Circuit.if(index, fResolver[1], this.resolver0_b.get())
+    );
+    this.resolver1_a.set(
+      Circuit.if(index.not(), fResolver[0], this.resolver1_a.get())
+    );
+    this.resolver1_b.set(
+      Circuit.if(index.not(), fResolver[1], this.resolver1_b.get())
+    );
   }
 
   hash(sk: PublicKey) {
