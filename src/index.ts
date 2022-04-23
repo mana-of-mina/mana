@@ -1,26 +1,35 @@
-import { Field, SmartContract, state, State, method, UInt64 } from 'snarkyjs';
+import { CID } from 'multiformats/cid';
+import { Mina, PrivateKey } from 'snarkyjs';
+import { RegistryClient } from './registry-zkapp.js';
 
-/**
- * Basic Example
- * See https://docs.minaprotocol.com/zkapps for more info.
- *
- * The Add contract initializes the state variable 'num' to be a Field(1) value by default when deployed.
- * When the 'update' method is called, the Add contract adds Field(2) to its 'num' contract state.
- */
-export default class Add extends SmartContract {
-  @state(Field) num = State<Field>();
+const main = async () => {
+  const Local = Mina.LocalBlockchain();
+  Mina.setActiveInstance(Local);
+  const sk = Local.testAccounts[0].privateKey;
 
-  // initialization
-  deploy(initialBalance: UInt64, num: Field = Field(1)) {
-    super.deploy();
-    this.balance.addInPlace(initialBalance);
-    this.num.set(num);
+  const appSk = PrivateKey.random();
+
+  console.log(`Deploying app at ${appSk.toPublicKey().toBase58()}`);
+  const address = await RegistryClient.deploy(appSk, sk);
+  console.log('Deployment successful');
+
+  const client = new RegistryClient(address);
+
+  console.log('Registering second domain');
+  await client.register(appSk, sk, '1');
+
+  console.log('Setting resolver for second domain');
+  try {
+    const cid = CID.parse('QmQzYrCh3yJeN9MSieh8MzMryZLQ3kKF99P1kNQDURyQAj');
+    await client.setResolver(appSk, sk, '1', cid);
+  } catch (e) {
+    console.log('plop', e);
+    return;
   }
 
-  @method async update() {
-    const currentState = await this.num.get();
-    const newState = currentState.add(2);
-    newState.assertEquals(currentState.add(2));
-    this.num.set(newState);
-  }
-}
+  console.log('Retrieving resolver for second domain');
+  const resolver = client.resolver('1');
+  console.log('Resolver is:', resolver.toString());
+};
+
+main();
