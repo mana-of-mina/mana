@@ -18,14 +18,11 @@ const main = async () => {
   console.log('Registering second domain');
   await client.register(appSk, sk, '1');
 
-  console.log('Setting resolver for second domain');
-  try {
-    const cid = CID.parse('QmQzYrCh3yJeN9MSieh8MzMryZLQ3kKF99P1kNQDURyQAj');
-    await client.setResolver(appSk, sk, '1', cid);
-  } catch (e) {
-    console.log('plop', e);
-    return;
-  }
+  const cid = CID.parse(
+    'QmQzYrCh3yJeN9MSieh8MzMryZLQ3kKF99P1kNQDURyQAj'
+  ).toV1();
+  console.log('Setting resolver for second domain to', cid.toString());
+  await client.setResolver(appSk, sk, '1', cid);
 
   console.log('Retrieving resolver for second domain');
   const resolver = client.resolver('1');

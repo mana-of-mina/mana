@@ -35,6 +35,10 @@ class Resolver extends CircuitValue {
   toCID() {
     return CID.decode(Encoding.bytesFromFields(this.value));
   }
+
+  static fromFields(fields: Field[]) {
+    return new Resolver(CID.decode(Encoding.bytesFromFields(fields)));
+  }
 }
 
 export default class RegistryApp extends SmartContract {
@@ -44,9 +48,11 @@ export default class RegistryApp extends SmartContract {
   // possibly, this will be the "2 websites of Mina"
 
   @state(Field) subnode0 = State<Field>(); // name -> hash of public key
-  @state(Field) resolver0 = State<Resolver>(); // name -> cid
+  @state(Field) resolver0_a = State<Field>(); // name -> cid
+  @state(Field) resolver0_b = State<Field>();
   @state(Field) subnode1 = State<Field>();
-  @state(Field) resolver1 = State<Resolver>();
+  @state(Field) resolver1_a = State<Field>();
+  @state(Field) resolver1_b = State<Field>();
 
   // initialization
   deploy(args: any) {
@@ -90,12 +96,19 @@ export default class RegistryApp extends SmartContract {
   }
 
   @method setResolver(sk: PrivateKey, subnode: Field, newResolver: Resolver) {
-    // const index = subnode.equals(0)
-    // const subnodeValue = Circuit.if(index, this.subnode0.get(), this.subnode1.get())
+    const index = subnode.equals(0);
+    const subnodeValue = Circuit.if(
+      index,
+      this.subnode0.get(),
+      this.subnode1.get()
+    );
 
-    this.subnode1.get().assertEquals(this.hash(sk.toPublicKey()));
+    subnodeValue.assertEquals(this.hash(sk.toPublicKey()));
 
-    this.resolver1.set(newResolver);
+    const fResolver = newResolver.toFields();
+    Field(fResolver.length).assertEquals(2);
+    this.resolver1_a.set(fResolver[0]);
+    this.resolver1_b.set(fResolver[1]);
     // Circuit.if(index, this.resolver0.set(newResolver), this.resolver1.set(newResolver))
   }
 
@@ -146,10 +159,9 @@ export class RegistryClient {
   resolver(subnode: string) {
     // For now, string are either 0 or 1
     const index = Number(subnode);
-    let resolver = this.registry.resolver1.get();
-    if (index) {
-      resolver = this.registry.resolver0.get();
-    }
+    const resolver_a = this.state[index * 3 + 1];
+    const resolver_b = this.state[index * 3 + 2];
+    const resolver = Resolver.fromFields([resolver_a, resolver_b]);
     return resolver.toCID();
   }
 
