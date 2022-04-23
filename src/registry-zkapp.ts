@@ -20,8 +20,6 @@ import {
   arrayProp,
 } from 'snarkyjs';
 
-await isReady;
-
 const MAX_NAMES = 2;
 
 class Resolver extends CircuitValue {
@@ -137,6 +135,7 @@ export class RegistryClient {
   }
 
   static async deploy(appSk: PrivateKey, eoaSk: PrivateKey) {
+    await isReady;
     let tx = Mina.transaction(eoaSk, () => {
       // TODO: I don't know what this balance is being used for
       const initialBalance = UInt64.fromNumber(1000000);

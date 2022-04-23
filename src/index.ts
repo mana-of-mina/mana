@@ -4,6 +4,7 @@ import { RegistryClient } from './registry-zkapp.js';
 
 const main = async () => {
   const Local = Mina.LocalBlockchain();
+
   Mina.setActiveInstance(Local);
   const sk = Local.testAccounts[0].privateKey;
 
